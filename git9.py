@@ -33,4 +33,4 @@ with st.form("create_repo_form"):
 
 # Rerun to update the list of repositories after creation
 if submitted and repo_name:
-    st.experimental_rerun()
+    st.rerun

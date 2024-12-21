@@ -1,6 +1,6 @@
 import os
 import streamlit as st
-from git import Repo
+from git import Repo, GitCommandError
 
 # Set the title of the Streamlit app
 st.title("Git9 Home")
@@ -11,10 +11,13 @@ def list_repositories():
 
 # Function to set the Git remote URL
 def set_git_remote(repo_path, remote_url):
-    repo = Repo(repo_path)
-    if "origin" in repo.remotes:
-        repo.delete_remote("origin")
-    repo.create_remote("origin", remote_url)
+    try:
+        repo = Repo(repo_path)
+        if "origin" in repo.remotes:
+            repo.delete_remote("origin")
+        repo.create_remote("origin", remote_url)
+    except GitCommandError as e:
+        st.error(f"Error setting remote for {repo_path}: {e}")
 
 # Display existing repositories
 st.header("Repositories")
@@ -34,12 +37,12 @@ with st.form("create_repo_form"):
     repo_name = st.text_input("Repository Name", "")
     submitted = st.form_submit_button("Create")
     if submitted and repo_name:
-        os.makedirs(repo_name, exist_ok=True)
-        new_repo = Repo.init(repo_name)
-        set_git_remote(repo_name, "https://git9website.streamlit.app")
-        st.success(f"Repository '{repo_name}' created successfully.")
-        repos = list_repositories()
-
-# Rerun to update the list of repositories after creation
-if submitted and repo_name:
-    st.experimental_rerun()
+        try:
+            os.makedirs(repo_name, exist_ok=True)
+            new_repo = Repo.init(repo_name)
+            set_git_remote(repo_name, "https://git9website.streamlit.app")
+            st.success(f"Repository '{repo_name}' created successfully.")
+            repos = list_repositories()
+            st.experimental_rerun()
+        except Exception as e:
+            st.error(f"Error creating repository '{repo_name}': {e}")

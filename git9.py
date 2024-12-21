@@ -15,7 +15,7 @@ repos = list_repositories()
 if repos:
     for repo in repos:
         st.write(repo)
-        vscode_url = f"https://git9website.streamlit.app/?folder={os.path.abspath(repo)}"
+        vscode_url = f"https://vscode.dev/{os.path.abspath(repo)}"
         st.markdown(f"[Edit in VSCode]({vscode_url})")
 else:
     st.write("No repositories found.")
@@ -33,4 +33,4 @@ with st.form("create_repo_form"):
 
 # Rerun to update the list of repositories after creation
 if submitted and repo_name:
-    st.rerun
+    st.rerun()
